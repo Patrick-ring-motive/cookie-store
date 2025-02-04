@@ -17,17 +17,17 @@ const Q = (varFn) => {
     try { return varFn?.(); } catch {}
 };
 
-const G =
-        q(() => globalThis) ??
-        q(() => self) ??
-        q(() => global) ??
-        q(() => window) ??
-        this ??
-        {};
+const G = q(() => globalThis) ??
+          q(() => self) ??
+          q(() => global) ??
+          q(() => window) ??
+          this ??
+          {};
 
 for (const x of ["globalThis", "self", "global"]) {
     G[x] = G;
 }
+const window = G;
 
 const newQ = (...args) => {
     const fn = args?.shift?.();
@@ -35,6 +35,7 @@ const newQ = (...args) => {
 };
 
 const instanceOf = (x,y) => !!Q(()=>x instanceof y);
+const isIn = (x,y) => !!Q(()=>x in y);
 const isString = x => typeof x === 'string' || instanceOf(x,String);
 const isBoolean = x => typeof x === 'boolean' || instanceOf(x,Boolean);
 const isNumber = x => typeof x === 'number' || instanceOf(x,Number);
@@ -420,8 +421,8 @@ class CookieStoreManager {
   }
 }
 
-if (!('cookies' in G.ServiceWorkerRegistration?.prototype )) {
-  Object.defineProperty(ServiceWorkerRegistration.prototype, 'cookies', {
+if (!isIn('cookies',G.ServiceWorkerRegistration?.prototype)) {
+  Object.defineProperty(G.ServiceWorkerRegistration?.prototype ?? {}, 'cookies', {
     configurable: true,
     enumerable: true,
     get() {
