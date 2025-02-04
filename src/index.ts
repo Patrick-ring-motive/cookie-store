@@ -2,13 +2,39 @@ const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
 const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
 
-const instanceOf = (x,y) => {
-  try{
-    return x instanceof y;
-  }catch{
-    return false;
-  }
+// All the utils
+const q = (varFn) => {
+    try {
+        return varFn?.();
+    } catch (e) {
+        if (e.name != "ReferenceError") {
+            throw e;
+        }
+    }
 };
+
+const Q = (varFn) => {
+    try { return varFn?.(); } catch {}
+};
+
+const G =
+        q(() => globalThis) ??
+        q(() => self) ??
+        q(() => global) ??
+        q(() => window) ??
+        this ??
+        {};
+
+for (const x of ["globalThis", "self", "global"]) {
+    G[x] = G;
+}
+
+const newQ = (...args) => {
+    const fn = args?.shift?.();
+    return fn && new fn(...args);
+};
+
+const instanceOf = (x,y) => !!Q(()=>x instanceof y);
 const isString = x => typeof x === 'string' || instanceOf(x,String);
 const isBoolean = x => typeof x === 'boolean' || instanceOf(x,Boolean);
 const isNumber = x => typeof x === 'number' || instanceOf(x,Number);
