@@ -1,9 +1,12 @@
 const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
+const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
 
 const isString = x => typeof x === 'string' || x instanceof String;
 const isBoolean = x => typeof x === 'boolean' || x instanceof Boolean;
 const isNumber = x => typeof x === 'number' || x instanceof Number;
+const isNullush = x => x === null || x === undefined;
+const isObject = x => typeof x === 'object' && !isNullish(x);
 
 // Try decoding a string using a decoding function.
 function tryDecode(
@@ -96,7 +99,7 @@ function parse(str: string, options: ParseOptions = {}): Cookie[] {
     let val = pair.substr(++eqIdx, pair.length).trim();
 
     // quoted values
-    val = val.replace(/^[\s'"`]+|[\s'"`]+$/g,'');
+    val = val.replace(quoteRegExp,'');
 
     // only assign once
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
