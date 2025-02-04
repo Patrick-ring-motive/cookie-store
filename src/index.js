@@ -69,7 +69,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
 exports.__esModule = true;
 exports.document = exports.CookieChangeEvent = exports.CookieStore = exports.cookieStore = void 0;
-// @ts-nocheck
 var decode = decodeURIComponent;
 var pairSplitRegExp = /; */;
 var quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
 const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
