@@ -51,5 +51,7 @@
     "banner": "banner-cli dist/index.js",
     "build": "tsc"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tsx": "^4.19.2"
+  }
 }

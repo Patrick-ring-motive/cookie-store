@@ -1,53 +1,68 @@
+// @ts-nocheck
 const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
 const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
 
 // All the utils
 const q = (varFn) => {
-    try {
-        return varFn?.();
-    } catch (e) {
-        if (e.name != "ReferenceError") {
-            throw e;
-        }
+  try {
+    return varFn?.();
+  } catch (e) {
+    if (e.name != 'ReferenceError') {
+      throw e;
     }
+  }
 };
 
 const Q = (varFn) => {
-    try { return varFn?.(); } catch {}
+  try {
+    return varFn?.();
+  } catch {}
 };
 
-const G = q(() => globalThis) ??
-          q(() => self) ??
-          q(() => global) ??
-          q(() => window) ??
-          this ??
-          {};
+const G =
+  q(() => globalThis) ??
+  q(() => self) ??
+  q(() => global) ??
+  q(() => window) ??
+  this ??
+  {};
 
-for (const x of ["globalThis", "self", "global"]) {
-    G[x] = G;
+for (const x of ['globalThis', 'self', 'global']) {
+  G[x] = G;
 }
+
+G.WeakSet ??= G.Set;
+const WeakSet = G.WeakSet;
+G.WeakMap ??= G.Map;
+const WeakMap = G.WeakMap;
+
 const window = G;
 
 const newQ = (...args) => {
-    const fn = args?.shift?.();
-    return fn && new fn(...args);
+  const fn = args?.shift?.();
+  return fn && new fn(...args);
 };
 
-const instanceOf = (x,y) => !!Q(()=>x instanceof y);
-const isIn = (x,y) => !!Q(()=>x in y);
-const isString = x => typeof x === 'string' || instanceOf(x,String);
-const isBoolean = x => typeof x === 'boolean' || instanceOf(x,Boolean);
-const isNumber = x => typeof x === 'number' || instanceOf(x,Number);
-const isNullish = x => x === null || x === undefined;
-const isObject = x => typeof x === 'object' && !isNullish(x);
+const instanceOf = (x, y) => !!Q(() => x instanceof y);
+const isIn = (x, y) => !!Q(() => x in y);
+const isString = (x) => typeof x === 'string' || instanceOf(x, String);
+const isBoolean = (x) => typeof x === 'boolean' || instanceOf(x, Boolean);
+const isNumber = (x) => typeof x === 'number' || instanceOf(x, Number);
+const isNullish = (x) => x === null || x === undefined;
+const isObject = (x) => typeof x === 'object' && !isNullish(x);
 
-const document = G.document ?? newQ(G.Document) ?? new (function Document(){});
+const document =
+  G.document ??
+  newQ(G.Document) ??
+  new (function Document() {
+    this.cookie = '';
+  })();
 
 // Try decoding a string using a decoding function.
 function tryDecode(
   str: string,
-  decode: ((encodedURIComponent: string) => string) | boolean
+  decode: ((encodedURIComponent: string) => string) | boolean,
 ): string {
   try {
     return isBoolean(decode) ? decodeURIComponent(str) : decode(str);
@@ -104,8 +119,6 @@ interface CookieChangeEventInit extends EventInit {
   deleted: CookieList;
 }
 
-
-
 /**
  * Parse a cookie header.
  *
@@ -135,7 +148,7 @@ function parse(str: string, options: ParseOptions = {}): Cookie[] {
     let val = pair.substr(++eqIdx, pair.length).trim();
 
     // quoted values
-    val = val.replace(quoteRegExp,'');
+    val = val.replace(quoteRegExp, '');
 
     // only assign once
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -156,7 +169,7 @@ class CookieChangeEvent extends Event {
 
   constructor(
     type: string,
-    eventInitDict: CookieChangeEventInit = { changed: [], deleted: [] }
+    eventInitDict: CookieChangeEventInit = { changed: [], deleted: [] },
   ) {
     super(type, eventInitDict);
     this.changed = eventInitDict.changed ?? [];
@@ -177,7 +190,7 @@ class CookieStore extends EventTarget {
   }
 
   async get(
-    init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions
+    init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions,
   ): Promise<Cookie | undefined> {
     if (isNullish(init)) {
       throw new TypeError('CookieStoreGetOptions must not be empty');
@@ -189,7 +202,7 @@ class CookieStore extends EventTarget {
 
   async set(
     init: CookieListItem | string,
-    possibleValue?: string
+    possibleValue?: string,
   ): Promise<void> {
     const item: CookieListItem = {
       name: '',
@@ -219,12 +232,12 @@ class CookieStore extends EventTarget {
 
       if (item.name?.startsWith?.('__Host') && item.domain) {
         throw new TypeError(
-          'Cookie domain must not be specified for host cookies'
+          'Cookie domain must not be specified for host cookies',
         );
       }
       if (item.name?.startsWith?.('__Host') && item.path != '/') {
         throw new TypeError(
-          'Cookie path must not be specified for host cookies'
+          'Cookie path must not be specified for host cookies',
         );
       }
 
@@ -238,7 +251,7 @@ class CookieStore extends EventTarget {
 
     if (item.name === '' && item?.value?.includes?.('=')) {
       throw new TypeError(
-        "Cookie value cannot contain '=' if the name is empty"
+        "Cookie value cannot contain '=' if the name is empty",
       );
     }
 
@@ -259,7 +272,7 @@ class CookieStore extends EventTarget {
 
     if (isNumber(item.expires)) {
       cookieString += '; Expires=' + new Date(item.expires).toUTCString();
-    } else if (instanceOf(item.expires,Date)) {
+    } else if (instanceOf(item.expires, Date)) {
       cookieString += '; Expires=' + item.expires.toUTCString();
     }
 
@@ -300,7 +313,7 @@ class CookieStore extends EventTarget {
   }
 
   async getAll(
-    init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions
+    init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions,
   ): Promise<Cookie[]> {
     const cookies = parse(document.cookie);
     if (Object.keys(init ?? {}).length === 0) {
@@ -328,7 +341,7 @@ class CookieStore extends EventTarget {
   }
 
   async delete(
-    init: CookieStoreDeleteOptions['name'] | CookieStoreDeleteOptions
+    init: CookieStoreDeleteOptions['name'] | CookieStoreDeleteOptions,
   ): Promise<void> {
     const item: CookieListItem = {
       name: '',
@@ -421,17 +434,21 @@ class CookieStoreManager {
   }
 }
 
-if (!isIn('cookies',G.ServiceWorkerRegistration?.prototype)) {
-  Object.defineProperty(G.ServiceWorkerRegistration?.prototype ?? {}, 'cookies', {
-    configurable: true,
-    enumerable: true,
-    get() {
-      const manager = Object.create(CookieStoreManager.prototype);
-      registrations.set(manager, this);
-      Object.defineProperty(this, 'cookies', { value: manager });
-      return manager;
+if (!isIn('cookies', G.ServiceWorkerRegistration?.prototype)) {
+  Object.defineProperty(
+    G.ServiceWorkerRegistration?.prototype ?? {},
+    'cookies',
+    {
+      configurable: true,
+      enumerable: true,
+      get() {
+        const manager = Object.create(CookieStoreManager.prototype);
+        registrations.set(manager, this);
+        Object.defineProperty(this, 'cookies', { value: manager });
+        return manager;
+      },
     },
-  });
+  );
 }
 
 declare global {
@@ -448,4 +465,4 @@ declare global {
 
 const cookieStore = Object.create(CookieStore.prototype) as CookieStore;
 
-export { cookieStore, CookieStore, CookieChangeEvent };
+export { cookieStore, CookieStore, CookieChangeEvent, document };
