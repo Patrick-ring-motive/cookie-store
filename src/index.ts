@@ -1,8 +1,9 @@
 const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
 
-const isString = s => typeof s === 'string' || s instanceof String;
+const isString = x => typeof x === 'string' || x instanceof String;
 const isBoolean = x => typeof x === 'boolean' || x instanceof Boolean;
+const isNumber = x => typeof x === 'number' || x instanceof Number;
 
 // Try decoding a string using a decoding function.
 function tryDecode(
@@ -203,7 +204,7 @@ class CookieStore extends EventTarget {
       );
     }
 
-    if (item.name && item.name.startsWith('__Host')) {
+    if (String(item.name).startsWith('__Host')) {
       item.secure = true;
     }
 
@@ -218,7 +219,7 @@ class CookieStore extends EventTarget {
       cookieString += '; Path=' + item.path;
     }
 
-    if (typeof item.expires === 'number') {
+    if (isNumber(item.expires)) {
       cookieString += '; Expires=' + new Date(item.expires).toUTCString();
     } else if (item.expires instanceof Date) {
       cookieString += '; Expires=' + item.expires.toUTCString();
