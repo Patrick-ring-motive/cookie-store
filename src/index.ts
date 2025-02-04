@@ -1,13 +1,16 @@
 const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
 
+const isString = s => typeof s === 'string' || s instanceof String;
+const isBoolean = x => typeof x === 'boolean' || x instanceof Boolean;
+
 // Try decoding a string using a decoding function.
 function tryDecode(
   str: string,
   decode: ((encodedURIComponent: string) => string) | boolean
 ): string {
   try {
-    return typeof decode === 'boolean' ? decodeURIComponent(str) : decode(str);
+    return isBoolean(decode) ? decodeURIComponent(str) : decode(str);
   } catch (e) {
     return str;
   }
@@ -61,6 +64,8 @@ interface CookieChangeEventInit extends EventInit {
   deleted: CookieList;
 }
 
+
+
 /**
  * Parse a cookie header.
  *
@@ -68,14 +73,14 @@ interface CookieChangeEventInit extends EventInit {
  * The object has the various cookies as keys(names) => values
  */
 function parse(str: string, options: ParseOptions = {}): Cookie[] {
-  if (typeof str !== 'string') {
+  if (!isString(str)) {
     throw new TypeError('argument str must be a string');
   }
 
   const obj = [];
-  const opt = options || {};
+  const opt = Object(options);
   const pairs = str.split(pairSplitRegExp);
-  const dec = opt.decode || decode;
+  const dec = opt.decode ?? decode;
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
@@ -158,7 +163,7 @@ class CookieStore extends EventTarget {
       expires: null,
       domain: null,
     };
-    if (typeof init === 'string') {
+    if (isString(init)) {
       item.name = init as string;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       item.value = possibleValue!;
