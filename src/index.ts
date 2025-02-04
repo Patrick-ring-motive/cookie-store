@@ -95,9 +95,7 @@ function parse(str: string, options: ParseOptions = {}): Cookie[] {
     let val = pair.substr(++eqIdx, pair.length).trim();
 
     // quoted values
-    if ('"' == val[0]) {
-      val = val.slice(1, -1);
-    }
+    val = val.replace(/^[\s'"`]+|[\s'"`]+$/g,'');
 
     // only assign once
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
