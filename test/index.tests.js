@@ -1,5 +1,9 @@
 /* global expect */
 
+import chai from 'chai';
+const {expect} = chai;
+import mocha from 'mocha';
+const {describe,it,beforeEach,afterEach} = mocha;
 import {cookieStore, CookieStore, CookieChangeEvent, document} from '../dist/index.js'
 
 globalThis.cookieStore = cookieStore;

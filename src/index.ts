@@ -3,7 +3,7 @@ const pairSplitRegExp = /; */;
 const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
 
 // All the utils
-const q = (varFn) => {
+const q = (varFn:any) => {
   try {
     return varFn?.();
   } catch (e) {
@@ -13,50 +13,50 @@ const q = (varFn) => {
   }
 };
 
-const Q = (varFn) => {
+const Q = (varFn:any) => {
   try {
     return varFn?.();
   } catch {}
 };
 
-const G =
-  q(() => globalThis) ??
+
+const G = q(() => globalThis) ??
   q(() => self) ??
+  //@ts-ignore
   q(() => global) ??
   q(() => window) ??
   this ??
   {};
+
 
 for (const x of ['globalThis', 'self', 'global']) {
   G[x] = G;
 }
 
 G.WeakSet ??= G.Set;
-const WeakSet = G.WeakSet;
 G.WeakMap ??= G.Map;
-const WeakMap = G.WeakMap;
 
 const window = G;
 
-const newQ = (...args) => {
+const newQ = (...args:any[]) => {
   const fn = args?.shift?.();
   return fn && new fn(...args);
 };
 
-const instanceOf = (x, y) => !!Q(() => x instanceof y);
-const isIn = (x, y) => !!Q(() => x in y);
-const isString = (x) => typeof x === 'string' || instanceOf(x, String);
-const isBoolean = (x) => typeof x === 'boolean' || instanceOf(x, Boolean);
-const isNumber = (x) => typeof x === 'number' || instanceOf(x, Number);
-const isNullish = (x) => x === null || x === undefined;
-const isObject = (x) => typeof x === 'object' && !isNullish(x);
+const instanceOf = (x:any, y:any) => !!Q(() => x instanceof y);
+const isIn = (x:any, y:any) => !!Q(() => x in y);
+const isString = (x:any) => typeof x === 'string' || instanceOf(x, String);
+const isBoolean = (x:any) => typeof x === 'boolean' || instanceOf(x, Boolean);
+const isNumber = (x:any) => typeof x === 'number' || instanceOf(x, Number);
+const isNullish = (x:any) => x === null || x === undefined;
+const isObject = (x:any) => typeof x === 'object' && !isNullish(x);
 
 const document =
   G.document ??
   newQ(G.Document) ??
-  new (function Document() {
-    this.cookie = '';
-  })();
+  new (class Document {
+    cookie = '';
+  });
 
 // Try decoding a string using a decoding function.
 function tryDecode(
@@ -64,7 +64,7 @@ function tryDecode(
   decode: ((encodedURIComponent: string) => string) | boolean,
 ): string {
   try {
-    return isBoolean(decode) ? decodeURIComponent(str) : decode(str);
+    return isBoolean(decode) ? decodeURIComponent(str) : (decode as CallableFunction)(str);
   } catch (e) {
     return str;
   }
@@ -270,9 +270,9 @@ class CookieStore extends EventTarget {
     }
 
     if (isNumber(item.expires)) {
-      cookieString += '; Expires=' + new Date(item.expires).toUTCString();
+      cookieString += '; Expires=' + new Date(item.expires as number).toUTCString();
     } else if (instanceOf(item.expires, Date)) {
-      cookieString += '; Expires=' + item.expires.toUTCString();
+      cookieString += '; Expires=' + (item.expires as Date).toUTCString();
     }
 
     if (item?.name?.startsWith?.('__Secure') || item.secure) {
@@ -323,8 +323,8 @@ class CookieStore extends EventTarget {
     if (isString(init)) {
       name = String(init);
     } else {
-      name = init.name;
-      url = init.url;
+      name = (init as CookieStoreGetOptions).name;
+      url = (init as CookieStoreGetOptions).url;
     }
     if (url) {
       const parsedURL = new URL(url, G.location?.origin);
@@ -373,10 +373,7 @@ const workerSubscriptions = new WeakMap<
   CookieStoreGetOptions[]
 >();
 
-const registrations = new WeakMap<
-  CookieStoreManager,
-  ServiceWorkerRegistration
->();
+const registrations = new WeakMap<CookieStoreManager,ServiceWorkerRegistration>();
 
 class CookieStoreManager {
   get [Symbol.toStringTag]() {
@@ -395,7 +392,7 @@ class CookieStoreManager {
       const name = subscription.name;
       const url = new URL(subscription?.url || '', worker.scope).toString();
 
-      if (currentSubcriptions.some((x) => x.name === name && x.url === url))
+      if (currentSubcriptions.some((x:any) => x.name === name && x.url === url))
         continue;
       currentSubcriptions.push({
         name: subscription.name,
@@ -406,7 +403,7 @@ class CookieStoreManager {
   }
 
   async getSubscriptions(): Promise<CookieStoreGetOptions[]> {
-    return (workerSubscriptions.get(this) || []).map(({ name, url }) => ({
+    return (workerSubscriptions.get(this) || []).map(({ name, url }:CookieStoreGetOptions) => ({
       name,
       url,
     }));
@@ -423,7 +420,7 @@ class CookieStoreManager {
       // TODO: Parse the url with the relevant settings objects API base URL.
       // https://wicg.github.io/cookie-store/#CookieStoreManager-unsubscribe
       const url = new URL(subscription.url || '', worker.scope).toString();
-      currentSubcriptions = currentSubcriptions.filter((x) => {
+      currentSubcriptions = currentSubcriptions.filter((x:any) => {
         if (x.name !== name) return true;
         if (x.url !== url) return true;
         return false;

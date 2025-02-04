@@ -8,7 +8,7 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "declaration": true,
-    "lib": ["ES2020", "dom"],
+    "lib": ["ES2015","ES2020", "dom"],
     "moduleResolution": "node",
     "outDir": "dist"
   },

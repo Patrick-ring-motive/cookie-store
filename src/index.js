@@ -89,15 +89,15 @@ var Q = function (varFn) {
     }
     catch (_a) { }
 };
-var G = (_e = (_d = (_c = (_b = (_a = q(function () { return globalThis; })) !== null && _a !== void 0 ? _a : q(function () { return self; })) !== null && _b !== void 0 ? _b : q(function () { return global; })) !== null && _c !== void 0 ? _c : q(function () { return window; })) !== null && _d !== void 0 ? _d : this) !== null && _e !== void 0 ? _e : {};
+var G = (_e = (_d = (_c = (_b = (_a = q(function () { return globalThis; })) !== null && _a !== void 0 ? _a : q(function () { return self; })) !== null && _b !== void 0 ? _b : 
+//@ts-ignore
+q(function () { return global; })) !== null && _c !== void 0 ? _c : q(function () { return window; })) !== null && _d !== void 0 ? _d : this) !== null && _e !== void 0 ? _e : {};
 for (var _i = 0, _o = ['globalThis', 'self', 'global']; _i < _o.length; _i++) {
     var x = _o[_i];
     G[x] = G;
 }
 (_f = G.WeakSet) !== null && _f !== void 0 ? _f : (G.WeakSet = G.Set);
-var WeakSet = G.WeakSet;
 (_g = G.WeakMap) !== null && _g !== void 0 ? _g : (G.WeakMap = G.Map);
-var WeakMap = G.WeakMap;
 var window = G;
 var newQ = function () {
     var _a;
@@ -115,9 +115,12 @@ var isBoolean = function (x) { return typeof x === 'boolean' || instanceOf(x, Bo
 var isNumber = function (x) { return typeof x === 'number' || instanceOf(x, Number); };
 var isNullish = function (x) { return x === null || x === undefined; };
 var isObject = function (x) { return typeof x === 'object' && !isNullish(x); };
-var document = (_j = (_h = G.document) !== null && _h !== void 0 ? _h : newQ(G.Document)) !== null && _j !== void 0 ? _j : new (function Document() {
-    this.cookie = '';
-})();
+var document = (_j = (_h = G.document) !== null && _h !== void 0 ? _h : newQ(G.Document)) !== null && _j !== void 0 ? _j : new (/** @class */ (function () {
+    function Document() {
+        this.cookie = '';
+    }
+    return Document;
+}()));
 exports.document = document;
 // Try decoding a string using a decoding function.
 function tryDecode(str, decode) {
