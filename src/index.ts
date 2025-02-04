@@ -120,8 +120,8 @@ class CookieChangeEvent extends Event {
     eventInitDict: CookieChangeEventInit = { changed: [], deleted: [] }
   ) {
     super(type, eventInitDict);
-    this.changed = eventInitDict.changed || [];
-    this.deleted = eventInitDict.deleted || [];
+    this.changed = eventInitDict.changed ?? [];
+    this.deleted = eventInitDict.deleted ?? [];
   }
 }
 
@@ -171,19 +171,19 @@ class CookieStore extends EventTarget {
       if (item.path && !item.path.startsWith('/')) {
         throw new TypeError('Cookie path must start with "/"');
       }
-      if (item.domain?.startsWith('.')) {
+      if (item.domain?.startsWith?.('.')) {
         throw new TypeError('Cookie domain cannot start with "."');
       }
-      if (item.domain && item.domain !== window.location.hostname) {
+      if (item.domain && item.domain !== globalThis.location?.hostname) {
         throw new TypeError('Cookie domain must domain-match current host');
       }
 
-      if (item.name?.startsWith('__Host') && item.domain) {
+      if (item.name?.startsWith?.('__Host') && item.domain) {
         throw new TypeError(
           'Cookie domain must not be specified for host cookies'
         );
       }
-      if (item.name?.startsWith('__Host') && item.path != '/') {
+      if (item.name?.startsWith?.('__Host') && item.path != '/') {
         throw new TypeError(
           'Cookie path must not be specified for host cookies'
         );
@@ -197,7 +197,7 @@ class CookieStore extends EventTarget {
       }
     }
 
-    if (item.name === '' && item.value && item.value.includes('=')) {
+    if (item.name === '' && String(item.value).includes('=')) {
       throw new TypeError(
         "Cookie value cannot contain '=' if the name is empty"
       );
