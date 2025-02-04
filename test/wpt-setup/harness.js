@@ -1,16 +1,17 @@
 /* global assert */
-import {cookieStore, CookieStore, CookieChangeEvent} from '../../dist/index.js';
+import {cookieStore, CookieStore, CookieChangeEvent, document} from '../../dist/index.js';
 
-window.cookieStore = cookieStore;
-window.CookieStore = CookieStore;
-window.CookieChangeEvent = CookieChangeEvent;
+globalThis.cookieStore = cookieStore;
+globalThis.CookieStore = CookieStore;
+globalThis.CookieChangeEvent = CookieChangeEvent;
+globalThis.document = document;
 
 self.GLOBAL = {
   isWindow: () => true,
   isWorker: () => false,
 };
 
-window.test = (fn, name) => {
+globalThis.test = (fn, name) => {
   it(name, () => {
     fn();
   });
@@ -22,7 +23,7 @@ const skippedTests = [
   'cookieStore.set adds / to path that does not end with /',
 ];
 
-window.promise_test = async (fn, name) => {
+globalThis.promise_test = async (fn, name) => {
   const cleanups = [];
   const testCase = {
     name,
@@ -42,7 +43,7 @@ window.promise_test = async (fn, name) => {
   it(name, skippedTests.includes(name) ? undefined : test);
 };
 
-window.promise_rejects_js = async (testCase, expectedError, promise) => {
+globalThis.promise_rejects_js = async (testCase, expectedError, promise) => {
   try {
     await promise;
   } catch (error) {
@@ -57,7 +58,7 @@ window.promise_rejects_js = async (testCase, expectedError, promise) => {
 };
 
 function service_worker_unregister(test, scope) {
-  var absoluteScope = new URL(scope, window.location).href;
+  var absoluteScope = new URL(scope, globalThis.location).href;
   return navigator.serviceWorker
     .getRegistration(scope)
     .then(function (registration) {
@@ -81,7 +82,7 @@ function service_worker_unregister_and_register(test, url, scope, options) {
   //.catch(() => assert.fail('unregister and register should not fail'));
 }
 
-window.wait_for_state = function (test, worker, state) {
+globalThis.wait_for_state = function (test, worker, state) {
   if (!worker || worker.state == undefined) {
     return Promise.reject(
       new Error('wait_for_state needs a ServiceWorker object to be passed.')
@@ -149,8 +150,8 @@ function is_state_advanced(state_a, state_b) {
   return false;
 }
 
-window.service_worker_unregister_and_register = service_worker_unregister_and_register;
-window.assert_equals = assert.equal;
-window.assert_true = assert.ok;
-window.assert_not_equals = assert.notEqual;
-window.assert_array_equals = assert.deepEqual;
+globalThis.service_worker_unregister_and_register = service_worker_unregister_and_register;
+globalThis.assert_equals = assert.equal;
+globalThis.assert_true = assert.ok;
+globalThis.assert_not_equals = assert.notEqual;
+globalThis.assert_array_equals = assert.deepEqual;

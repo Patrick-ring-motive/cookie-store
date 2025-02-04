@@ -1,10 +1,11 @@
 /* global expect */
 
-import {cookieStore, CookieStore, CookieChangeEvent} from '../dist/index.js'
+import {cookieStore, CookieStore, CookieChangeEvent, document} from '../dist/index.js'
 
-window.cookieStore = cookieStore
-window.CookieStore = CookieStore
-window.CookieChangeEvent = CookieChangeEvent
+globalThis.cookieStore = cookieStore;
+globalThis.CookieStore = CookieStore;
+globalThis.CookieChangeEvent = CookieChangeEvent;
+globalThis.document = document;
 
 describe('Cookie Store', () => {
   beforeEach(() => {
@@ -18,19 +19,19 @@ describe('Cookie Store', () => {
   });
 
   it('is a class, instanceof CookieStore', () => {
-    expect(window.cookieStore).to.be.instanceof(window.CookieStore);
+    expect(globalThis.cookieStore).to.be.instanceof(globalThis.CookieStore);
   });
 
   it('is an instanceof EventTarget', () => {
-    expect(window.cookieStore).to.be.instanceof(window.EventTarget);
+    expect(globalThis.cookieStore).to.be.instanceof(globalThis.EventTarget);
   });
 
   it('has a toStringTag of CookieStore', () => {
-    expect(window.cookieStore[Symbol.toStringTag]).to.equal('CookieStore');
+    expect(globalThis.cookieStore[Symbol.toStringTag]).to.equal('CookieStore');
   });
 
   it('cannot be constructed', () => {
-    expect(() => new window.CookieStore()).to.throw(TypeError, 'Illegal');
+    expect(() => new globalThis.CookieStore()).to.throw(TypeError, 'Illegal');
   });
 
   describe('get', () => {
@@ -38,14 +39,14 @@ describe('Cookie Store', () => {
       const foo = 'foo';
       const bar = 'bar';
       document.cookie = `${foo}=${bar}`;
-      const result = await window.cookieStore.get(foo);
+      const result = await globalThis.cookieStore.get(foo);
       expect(result).to.deep.equal({ name: foo, value: bar });
     });
     it('returns undefined when no cookie is found', async () => {
       const foo = 'foo';
       const bar = 'bar';
       document.cookie = `${foo}=${bar}`;
-      const result = await window.cookieStore.get(bar);
+      const result = await globalThis.cookieStore.get(bar);
       expect(result).to.deep.equal(undefined);
     });
   });
@@ -55,7 +56,7 @@ describe('Cookie Store', () => {
       const bar = 'bar';
       const baz = 'baz';
       document.cookie = `${foo}=${bar}; ${bar}=${baz}`;
-      const result = await window.cookieStore.getAll();
+      const result = await globalThis.cookieStore.getAll();
       expect(result).to.deep.equal([
         { name: foo, value: bar },
         { name: bar, value: baz },
@@ -66,7 +67,7 @@ describe('Cookie Store', () => {
       const bar = 'bar';
       const baz = 'baz';
       document.cookie = `${foo}=${bar}; ${bar}=${baz}`;
-      const result = await window.cookieStore.getAll(bar);
+      const result = await globalThis.cookieStore.getAll(bar);
       expect(result).to.deep.equal([{ name: bar, value: baz }]);
     });
     it('returns an empty when no matching cookies are found', async () => {
@@ -74,7 +75,7 @@ describe('Cookie Store', () => {
       const bar = 'bar';
       const baz = 'baz';
       document.cookie = `${foo}=${bar}; ${bar}=${baz}`;
-      const result = await window.cookieStore.getAll(baz);
+      const result = await globalThis.cookieStore.getAll(baz);
       expect(result).to.deep.equal([]);
     });
   });
