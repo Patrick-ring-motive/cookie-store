@@ -41,6 +41,8 @@ const isNumber = x => typeof x === 'number' || instanceOf(x,Number);
 const isNullish = x => x === null || x === undefined;
 const isObject = x => typeof x === 'object' && !isNullish(x);
 
+const document = G.document ?? newQ(G.Document) ?? new (function Document(){});
+
 // Try decoding a string using a decoding function.
 function tryDecode(
   str: string,
@@ -144,7 +146,6 @@ function parse(str: string, options: ParseOptions = {}): Cookie[] {
       });
     }
   }
-
   return obj;
 }
 
@@ -226,7 +227,7 @@ class CookieStore extends EventTarget {
         );
       }
 
-      if (item.path && item.path.endsWith('/')) {
+      if (item?.path?.endsWith?.('/')) {
         item.path = item.path.slice(0, -1);
       }
       if (item.path === '') {
@@ -234,18 +235,18 @@ class CookieStore extends EventTarget {
       }
     }
 
-    if (item.name === '' && String(item.value).includes('=')) {
+    if (item.name === '' && item?.value?.includes?.('=')) {
       throw new TypeError(
         "Cookie value cannot contain '=' if the name is empty"
       );
     }
 
-    if (String(item.name).startsWith('__Host')) {
+    if (item?.name?.startsWith?.('__Host')) {
       item.secure = true;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    let cookieString = `${item.name}=${encodeURIComponent(item.value!)}`;
+    let cookieString = `${item?.name}=${encodeURIComponent(String(item?.value))}`;
 
     if (item.domain) {
       cookieString += '; Domain=' + item.domain;
@@ -257,11 +258,11 @@ class CookieStore extends EventTarget {
 
     if (isNumber(item.expires)) {
       cookieString += '; Expires=' + new Date(item.expires).toUTCString();
-    } else if (item.expires instanceof Date) {
+    } else if (instanceOf(item.expires,Date)) {
       cookieString += '; Expires=' + item.expires.toUTCString();
     }
 
-    if ((item.name && item.name.startsWith('__Secure')) || item.secure) {
+    if (item?.name?.startsWith?.('__Secure') || item.secure) {
       item.sameSite = CookieSameSite.lax;
       cookieString += '; Secure';
     }
@@ -301,22 +302,22 @@ class CookieStore extends EventTarget {
     init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions
   ): Promise<Cookie[]> {
     const cookies = parse(document.cookie);
-    if (init == null || Object.keys(init).length === 0) {
+    if (Object.keys(init ?? {}).length === 0) {
       return cookies;
     }
     let name: string | undefined;
     let url;
-    if (typeof init === 'string') {
-      name = init as string;
+    if (isString(init)) {
+      name = String(init);
     } else {
       name = init.name;
       url = init.url;
     }
     if (url) {
-      const parsedURL = new URL(url, window.location.origin);
+      const parsedURL = new URL(url, G.location?.origin);
       if (
-        window.location.href !== parsedURL.href ||
-        window.location.origin !== parsedURL.origin
+        G.location?.href !== parsedURL.href ||
+        G.location?.origin !== parsedURL.origin
       ) {
         throw new TypeError('URL must match the document URL');
       }
@@ -337,8 +338,8 @@ class CookieStore extends EventTarget {
       expires: null,
       domain: null,
     };
-    if (typeof init === 'string') {
-      item.name = init as string;
+    if (isString(init)) {
+      item.name = String(init);
     } else {
       Object.assign(item, init);
     }
@@ -379,7 +380,7 @@ class CookieStoreManager {
     if (!worker) throw new TypeError('Illegal invocation');
     for (const subscription of subscriptions) {
       const name = subscription.name;
-      const url = new URL(subscription.url || '', worker.scope).toString();
+      const url = new URL(subscription?.url || '', worker.scope).toString();
 
       if (currentSubcriptions.some((x) => x.name === name && x.url === url))
         continue;
@@ -419,7 +420,7 @@ class CookieStoreManager {
   }
 }
 
-if (!('cookies' in ServiceWorkerRegistration.prototype)) {
+if (!('cookies' in G.ServiceWorkerRegistration?.prototype )) {
   Object.defineProperty(ServiceWorkerRegistration.prototype, 'cookies', {
     configurable: true,
     enumerable: true,
