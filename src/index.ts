@@ -2,10 +2,17 @@ const decode = decodeURIComponent;
 const pairSplitRegExp = /; */;
 const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
 
-const isString = x => typeof x === 'string' || x instanceof String;
-const isBoolean = x => typeof x === 'boolean' || x instanceof Boolean;
-const isNumber = x => typeof x === 'number' || x instanceof Number;
-const isNullush = x => x === null || x === undefined;
+const instanceOf = (x,y) => {
+  try{
+    return x instanceof y;
+  }catch{
+    return false;
+  }
+};
+const isString = x => typeof x === 'string' || instanceOf(x,String);
+const isBoolean = x => typeof x === 'boolean' || instanceOf(x,Boolean);
+const isNumber = x => typeof x === 'number' || instanceOf(x,Number);
+const isNullish = x => x === null || x === undefined;
 const isObject = x => typeof x === 'object' && !isNullish(x);
 
 // Try decoding a string using a decoding function.
@@ -104,7 +111,7 @@ function parse(str: string, options: ParseOptions = {}): Cookie[] {
     // only assign once
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (undefined == obj[key]) {
+    if (isNullish(obj[key])) {
       obj.push({
         name: key,
         value: tryDecode(val, dec),
@@ -144,7 +151,7 @@ class CookieStore extends EventTarget {
   async get(
     init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions
   ): Promise<Cookie | undefined> {
-    if (init == null) {
+    if (isNullish(init)) {
       throw new TypeError('CookieStoreGetOptions must not be empty');
     } else if (init instanceof Object && !Object.keys(init).length) {
       throw new TypeError('CookieStoreGetOptions must not be empty');
