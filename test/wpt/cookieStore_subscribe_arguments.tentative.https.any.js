@@ -7,8 +7,8 @@
 promise_test(async testCase => {
   if (self.GLOBAL.isWindow()) {
     const registration = await service_worker_unregister_and_register(
-        testCase, 'resources/empty_sw.js',
-        '/cookie-store/resources/does/not/exist');
+      testCase, 'resources/empty_sw.js',
+      '/cookie-store/resources/does/not/exist');
     testCase.add_cleanup(() => registration.unregister());
 
     // Must wait for the service worker to enter the 'activated' state before
@@ -20,12 +20,16 @@ promise_test(async testCase => {
     // Must wait for the service worker to enter the 'activated' state before
     // subscribing to cookiechange events.
     await new Promise(resolve => {
-      self.addEventListener('activate', event => { resolve(); });
+      self.addEventListener('activate', event => {
+        resolve();
+      });
     });
   }
 
   {
-    const subscriptions = [{ name: 'cookie-name' }];
+    const subscriptions = [{
+      name: 'cookie-name'
+    }];
     await self.registration.cookies.subscribe(subscriptions);
     testCase.add_cleanup(() => registration.cookies.unsubscribe(subscriptions));
   }
@@ -40,8 +44,8 @@ promise_test(async testCase => {
 promise_test(async testCase => {
   if (self.GLOBAL.isWindow()) {
     const registration = await service_worker_unregister_and_register(
-        testCase, 'resources/empty_sw.js',
-        '/cookie-store/resources/does/not/exist');
+      testCase, 'resources/empty_sw.js',
+      '/cookie-store/resources/does/not/exist');
     testCase.add_cleanup(() => registration.unregister());
 
     // Must wait for the service worker to enter the 'activated' state before
@@ -53,20 +57,24 @@ promise_test(async testCase => {
     // If service worker is not active yet, it must wait for it to enter the
     // 'activated' state before subscribing to cookiechange events.
     await new Promise(resolve => {
-      self.addEventListener('activate', event => { resolve(); });
+      self.addEventListener('activate', event => {
+        resolve();
+      });
     });
   }
 
   await promise_rejects_js(testCase, TypeError,
-      registration.cookies.subscribe(
-          { name: 'cookie-name', url: '/wrong/path' }));
+    registration.cookies.subscribe({
+      name: 'cookie-name',
+      url: '/wrong/path'
+    }));
 }, 'cookieStore.subscribe with invalid url path in option');
 
 promise_test(async testCase => {
   if (self.GLOBAL.isWindow()) {
     const registration = await service_worker_unregister_and_register(
-        testCase, 'resources/empty_sw.js',
-        '/cookie-store/resources/does/not/exist');
+      testCase, 'resources/empty_sw.js',
+      '/cookie-store/resources/does/not/exist');
     testCase.add_cleanup(() => registration.unregister());
 
     // Must wait for the service worker to enter the 'activated' state before
@@ -78,12 +86,16 @@ promise_test(async testCase => {
     // Must wait for the service worker to enter the 'activated' state before
     // subscribing to cookiechange events.
     await new Promise(resolve => {
-      self.addEventListener('activate', event => { resolve(); });
+      self.addEventListener('activate', event => {
+        resolve();
+      });
     });
   }
 
   {
-    const subscriptions = [{ name: 'cookie-name' }];
+    const subscriptions = [{
+      name: 'cookie-name'
+    }];
     // Call subscribe for same subscription multiple times to verify that it is
     // idempotent.
     await self.registration.cookies.subscribe(subscriptions);
@@ -102,8 +114,8 @@ promise_test(async testCase => {
 promise_test(async testCase => {
   if (self.GLOBAL.isWindow()) {
     const registration = await service_worker_unregister_and_register(
-        testCase, 'resources/empty_sw.js',
-        '/cookie-store/resources/does/not/exist');
+      testCase, 'resources/empty_sw.js',
+      '/cookie-store/resources/does/not/exist');
     testCase.add_cleanup(() => registration.unregister());
 
     // Must wait for the service worker to enter the 'activated' state before
@@ -115,14 +127,19 @@ promise_test(async testCase => {
     // Must wait for the service worker to enter the 'activated' state before
     // subscribing to cookiechange events.
     await new Promise(resolve => {
-      self.addEventListener('activate', event => { resolve(); });
+      self.addEventListener('activate', event => {
+        resolve();
+      });
     });
   }
 
   {
-    const subscriptions = [
-      { name: 'cookie-name1' },
-      { name: 'cookie-name2' },
+    const subscriptions = [{
+        name: 'cookie-name1'
+      },
+      {
+        name: 'cookie-name2'
+      },
     ];
     await self.registration.cookies.subscribe(subscriptions);
     testCase.add_cleanup(() => registration.cookies.unsubscribe(subscriptions));

@@ -1,5 +1,10 @@
 /* global assert */
-import {cookieStore, CookieStore, CookieChangeEvent, document} from '../../dist/index.js';
+import {
+  cookieStore,
+  CookieStore,
+  CookieChangeEvent,
+  document
+} from '../../dist/index.js';
 
 globalThis.cookieStore = cookieStore;
 globalThis.CookieStore = CookieStore;
@@ -61,7 +66,7 @@ function service_worker_unregister(test, scope) {
   var absoluteScope = new URL(scope, globalThis.location).href;
   return navigator.serviceWorker
     .getRegistration(scope)
-    .then(function (registration) {
+    .then(function(registration) {
       if (registration && registration.scope === absoluteScope)
         return registration.unregister();
     });
@@ -75,14 +80,16 @@ function service_worker_unregister_and_register(test, url, scope, options) {
   if (options && options.scope)
     return Promise.reject(new Error('scope must not be passed in options'));
 
-  options = Object.assign({ scope: scope }, options);
-  return service_worker_unregister(test, scope).then(function () {
+  options = Object.assign({
+    scope: scope
+  }, options);
+  return service_worker_unregister(test, scope).then(function() {
     return navigator.serviceWorker.register(url, options);
   });
   //.catch(() => assert.fail('unregister and register should not fail'));
 }
 
-globalThis.wait_for_state = function (test, worker, state) {
+globalThis.wait_for_state = function(test, worker, state) {
   if (!worker || worker.state == undefined) {
     return Promise.reject(
       new Error('wait_for_state needs a ServiceWorker object to be passed.')
@@ -97,15 +104,15 @@ globalThis.wait_for_state = function (test, worker, state) {
       )
     );
   }
-  return new Promise(function (resolve, reject) {
-    worker.addEventListener('statechange', function () {
+  return new Promise(function(resolve, reject) {
+    worker.addEventListener('statechange', function() {
       if (worker.state === state) resolve(state);
 
       if (is_state_advanced(worker.state, state)) {
         reject(
           new Error(
             `The state of the worker becomes ${worker.state} while waiting` +
-              `for ${state}.`
+            `for ${state}.`
           )
         );
       }

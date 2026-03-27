@@ -67,7 +67,9 @@ promise_test(async testCase => {
     await cookieStore.delete('cookie-name-2');
   });
 
-  const cookies = await cookieStore.getAll({ name: 'cookie-name' });
+  const cookies = await cookieStore.getAll({
+    name: 'cookie-name'
+  });
   assert_equals(cookies.length, 1);
   assert_equals(cookies[0].name, 'cookie-name');
   assert_equals(cookies[0].value, 'cookie-value');
@@ -83,8 +85,9 @@ promise_test(async testCase => {
     await cookieStore.delete('cookie-name-2');
   });
 
-  const cookies = await cookieStore.getAll('cookie-name',
-                                           { name: 'wrong-cookie-name' });
+  const cookies = await cookieStore.getAll('cookie-name', {
+    name: 'wrong-cookie-name'
+  });
   assert_equals(cookies.length, 1);
   assert_equals(cookies[0].name, 'cookie-name');
   assert_equals(cookies[0].value, 'cookie-value');
@@ -101,7 +104,9 @@ promise_test(async testCase => {
     target_url = target_url + '/path/within/scope';
   }
 
-  const cookies = await cookieStore.getAll({ url: target_url });
+  const cookies = await cookieStore.getAll({
+    url: target_url
+  });
   assert_equals(cookies.length, 1);
   assert_equals(cookies[0].name, 'cookie-name');
   assert_equals(cookies[0].value, 'cookie-value');
@@ -118,7 +123,9 @@ promise_test(async testCase => {
     target_path = target_path + '/path/within/scope';
   }
 
-  const cookies = await cookieStore.getAll({ url: target_path });
+  const cookies = await cookieStore.getAll({
+    url: target_path
+  });
   assert_equals(cookies.length, 1);
   assert_equals(cookies[0].name, 'cookie-name');
   assert_equals(cookies[0].value, 'cookie-value');
@@ -131,9 +138,10 @@ promise_test(async testCase => {
   });
 
   const invalid_url =
-      `${self.location.protocol}//${self.location.host}/different/path`;
-  await promise_rejects_js(testCase, TypeError, cookieStore.getAll(
-      { url: invalid_url }));
+    `${self.location.protocol}//${self.location.host}/different/path`;
+  await promise_rejects_js(testCase, TypeError, cookieStore.getAll({
+    url: invalid_url
+  }));
 }, 'cookieStore.getAll with invalid url path in options');
 
 promise_test(async testCase => {
@@ -143,7 +151,8 @@ promise_test(async testCase => {
   });
 
   const invalid_url =
-      `${self.location.protocol}//www.example.com${self.location.pathname}`;
-  await promise_rejects_js(testCase, TypeError, cookieStore.getAll(
-      { url: invalid_url }));
+    `${self.location.protocol}//www.example.com${self.location.pathname}`;
+  await promise_rejects_js(testCase, TypeError, cookieStore.getAll({
+    url: invalid_url
+  }));
 }, 'cookieStore.getAll with invalid url host in options');

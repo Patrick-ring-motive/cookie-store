@@ -1,10 +1,22 @@
 /* global expect */
 
 import chai from 'chai';
-const {expect} = chai;
+const {
+  expect
+} = chai;
 import mocha from 'mocha';
-const {describe,it,beforeEach,afterEach} = mocha;
-import {cookieStore, CookieStore, CookieChangeEvent, document} from '../dist/index.js'
+const {
+  describe,
+  it,
+  beforeEach,
+  afterEach
+} = mocha;
+import {
+  cookieStore,
+  CookieStore,
+  CookieChangeEvent,
+  document
+} from '../dist/index.js'
 
 globalThis.cookieStore = cookieStore;
 globalThis.CookieStore = CookieStore;
@@ -44,7 +56,10 @@ describe('Cookie Store', () => {
       const bar = 'bar';
       document.cookie = `${foo}=${bar}`;
       const result = await globalThis.cookieStore.get(foo);
-      expect(result).to.deep.equal({ name: foo, value: bar });
+      expect(result).to.deep.equal({
+        name: foo,
+        value: bar
+      });
     });
     it('returns undefined when no cookie is found', async () => {
       const foo = 'foo';
@@ -61,9 +76,14 @@ describe('Cookie Store', () => {
       const baz = 'baz';
       document.cookie = `${foo}=${bar}; ${bar}=${baz}`;
       const result = await globalThis.cookieStore.getAll();
-      expect(result).to.deep.equal([
-        { name: foo, value: bar },
-        { name: bar, value: baz },
+      expect(result).to.deep.equal([{
+          name: foo,
+          value: bar
+        },
+        {
+          name: bar,
+          value: baz
+        },
       ]);
     });
     it('returns an array with cookies that match name', async () => {
@@ -72,7 +92,10 @@ describe('Cookie Store', () => {
       const baz = 'baz';
       document.cookie = `${foo}=${bar}; ${bar}=${baz}`;
       const result = await globalThis.cookieStore.getAll(bar);
-      expect(result).to.deep.equal([{ name: bar, value: baz }]);
+      expect(result).to.deep.equal([{
+        name: bar,
+        value: baz
+      }]);
     });
     it('returns an empty when no matching cookies are found', async () => {
       const foo = 'foo';

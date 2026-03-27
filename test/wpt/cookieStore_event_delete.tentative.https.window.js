@@ -16,7 +16,7 @@ promise_test(async testCase => {
   assert_equals(event.deleted.length, 1);
   assert_equals(event.deleted[0].name, 'cookie-name');
   assert_equals(
-      event.deleted[0].value, undefined,
-      'Cookie change events for deletions should not have cookie values');
+    event.deleted[0].value, undefined,
+    'Cookie change events for deletions should not have cookie values');
   assert_equals(event.changed.length, 0);
 }, 'cookieStore fires change event for cookie deleted by cookieStore.delete()');

@@ -10,9 +10,14 @@ test(() => {
 
 test(() => {
   const event = new CookieChangeEvent('change', {
-    changed: [
-      { name: 'changed-name1', value: 'changed-value1' },
-      { name: 'changed-name2', value: 'changed-value2' },
+    changed: [{
+        name: 'changed-name1',
+        value: 'changed-value1'
+      },
+      {
+        name: 'changed-name2',
+        value: 'changed-value2'
+      },
     ],
   });
   assert_true(event instanceof CookieChangeEvent);
@@ -27,9 +32,14 @@ test(() => {
 
 test(() => {
   const event = new CookieChangeEvent('change', {
-    deleted: [
-      { name: 'deleted-name1', value: 'deleted-value1' },
-      { name: 'deleted-name2', value: 'deleted-value2' },
+    deleted: [{
+        name: 'deleted-name1',
+        value: 'deleted-value1'
+      },
+      {
+        name: 'deleted-name2',
+        value: 'deleted-value2'
+      },
     ],
   });
   assert_true(event instanceof CookieChangeEvent);
@@ -44,13 +54,19 @@ test(() => {
 
 test(() => {
   const event = new CookieChangeEvent('change', {
-    changed: [
-      { name: 'changed-name1', value: 'changed-value1' },
-      { name: 'changed-name2', value: 'changed-value2' },
+    changed: [{
+        name: 'changed-name1',
+        value: 'changed-value1'
+      },
+      {
+        name: 'changed-name2',
+        value: 'changed-value2'
+      },
     ],
-    deleted: [
-      { name: 'deleted-name1', value: 'deleted-value1' },
-    ],
+    deleted: [{
+      name: 'deleted-name1',
+      value: 'deleted-value1'
+    }, ],
   });
   assert_true(event instanceof CookieChangeEvent);
   assert_equals(event.type, 'change');
