@@ -1,19 +1,38 @@
-module.exports = function (config) {
+module.exports = function(config) {
   config.set({
     basePath: '..',
     files: [
       // Include the compiled library
-      { pattern: './dist/index.js', type: 'module', included: false },
+      {
+        pattern: './dist/index.js',
+        type: 'module',
+        included: false
+      },
       // Include the compiled service worker polyfill
-      { pattern: './dist/service-worker.js', included: false },
+      {
+        pattern: './dist/service-worker.js',
+        included: false
+      },
       // Set up test environment to be able to run WPT tests
-      { pattern: './test/wpt-setup/*.js', type: 'module' },
+      {
+        pattern: './test/wpt-setup/*.js',
+        type: 'module'
+      },
       // Our tests
-      { pattern: './test/index.tests.js', type: 'module' },
+      {
+        pattern: './test/index.tests.js',
+        type: 'module'
+      },
       // Web Platform Tests
-      { pattern: './test/wpt/*.js', type: 'module' },
+      {
+        pattern: './test/wpt/*.js',
+        type: 'module'
+      },
       // Resources
-      { pattern: './test/resources/*', included: false },
+      {
+        pattern: './test/resources/*',
+        included: false
+      },
     ],
     plugins: ['karma-*'],
     reporters: ['progress'],
