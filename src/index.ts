@@ -3,7 +3,7 @@ const pairSplitRegExp = /; */;
 const quoteRegExp = /^[\s'"`]+|[\s'"`]+$/g;
 
 // All the utils
-const q = (varFn:any) => {
+const q = (varFn: any) => {
   try {
     return varFn?.();
   } catch (e) {
@@ -13,21 +13,18 @@ const q = (varFn:any) => {
   }
 };
 
-const Q = (varFn:any) => {
+const Q = (varFn: any) => {
   try {
     return varFn?.();
   } catch {}
 };
-
 
 const G = q(() => globalThis) ??
   q(() => self) ??
   //@ts-ignore
   q(() => global) ??
   q(() => window) ??
-  this ??
-  {};
-
+  this ?? {};
 
 for (const x of ['globalThis', 'self', 'global']) {
   G[x] = G;
@@ -38,23 +35,23 @@ G.WeakMap ??= G.Map;
 
 const window = G;
 
-const newQ = (...args:any[]) => {
+const newQ = (...args: any[]) => {
   const fn = args?.shift?.();
   return fn && new fn(...args);
 };
 
-const instanceOf = (x:any, y:any) => !!Q(() => x instanceof y);
-const isIn = (x:any, y:any) => !!Q(() => x in y);
-const isString = (x:any) => typeof x === 'string' || instanceOf(x, String);
-const isBoolean = (x:any) => typeof x === 'boolean' || instanceOf(x, Boolean);
-const isNumber = (x:any) => typeof x === 'number' || instanceOf(x, Number);
-const isNullish = (x:any) => x === null || x === undefined;
-const isObject = (x:any) => typeof x === 'object' && !isNullish(x);
+const instanceOf = (x: any, y: any) => !!Q(() => x instanceof y);
+const isIn = (x: any, y: any) => !!Q(() => x in y);
+const isString = (x: any) => typeof x === 'string' || instanceOf(x, String);
+const isBoolean = (x: any) => typeof x === 'boolean' || instanceOf(x, Boolean);
+const isNumber = (x: any) => typeof x === 'number' || instanceOf(x, Number);
+const isNullish = (x: any) => x === null || x === undefined;
+const isObject = (x: any) => typeof x === 'object' && !isNullish(x);
 
 const document =
   G.document ??
   newQ(G.Document) ??
-  new (class Document {
+  new(class Document {
     cookie = '';
   });
 
@@ -71,44 +68,44 @@ function tryDecode(
 }
 
 interface Cookie {
-  domain?: string;
-  expires?: number;
+  domain ? : string;
+  expires ? : number;
   name: string;
-  path?: string;
-  secure?: boolean;
-  sameSite?: CookieSameSite;
+  path ? : string;
+  secure ? : boolean;
+  sameSite ? : CookieSameSite;
   value: string;
 }
 
 interface CookieStoreDeleteOptions {
   name: string;
-  domain?: string;
-  path?: string;
+  domain ? : string;
+  path ? : string;
 }
 
 interface CookieStoreGetOptions {
-  name?: string;
-  url?: string;
+  name ? : string;
+  url ? : string;
 }
 
 interface ParseOptions {
-  decode?: boolean;
+  decode ? : boolean;
 }
 
 enum CookieSameSite {
   strict = 'strict',
-  lax = 'lax',
-  none = 'none',
+    lax = 'lax',
+    none = 'none',
 }
 
 interface CookieListItem {
-  name?: string;
-  value?: string;
+  name ? : string;
+  value ? : string;
   domain: string | null;
-  path?: string;
+  path ? : string;
   expires: Date | number | null;
-  secure?: boolean;
-  sameSite?: CookieSameSite;
+  secure ? : boolean;
+  sameSite ? : CookieSameSite;
 }
 
 type CookieList = CookieListItem[];
@@ -168,7 +165,10 @@ class CookieChangeEvent extends Event {
 
   constructor(
     type: string,
-    eventInitDict: CookieChangeEventInit = { changed: [], deleted: [] },
+    eventInitDict: CookieChangeEventInit = {
+      changed: [],
+      deleted: []
+    },
   ) {
     super(type, eventInitDict);
     this.changed = eventInitDict.changed ?? [];
@@ -177,9 +177,9 @@ class CookieChangeEvent extends Event {
 }
 
 class CookieStore extends EventTarget {
-  onchange?: (event: CookieChangeEvent) => void;
+  onchange ? : (event: CookieChangeEvent) => void;
 
-  get [Symbol.toStringTag](): 'CookieStore' {
+  get[Symbol.toStringTag](): 'CookieStore' {
     return 'CookieStore';
   }
 
@@ -189,8 +189,8 @@ class CookieStore extends EventTarget {
   }
 
   async get(
-    init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions,
-  ): Promise<Cookie | undefined> {
+    init ? : CookieStoreGetOptions['name'] | CookieStoreGetOptions,
+  ): Promise < Cookie | undefined > {
     if (isNullish(init)) {
       throw new TypeError('CookieStoreGetOptions must not be empty');
     } else if (init instanceof Object && !Object.keys(init).length) {
@@ -201,8 +201,8 @@ class CookieStore extends EventTarget {
 
   async set(
     init: CookieListItem | string,
-    possibleValue?: string,
-  ): Promise<void> {
+    possibleValue ? : string,
+  ): Promise < void > {
     const item: CookieListItem = {
       name: '',
       value: '',
@@ -300,20 +300,26 @@ class CookieStore extends EventTarget {
       const deleted = [];
 
       if (previousCookie && !(await this.get(item))) {
-        deleted.push({ ...item, value: undefined });
+        deleted.push({
+          ...item,
+          value: undefined
+        });
       } else {
         changed.push(item);
       }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const event = new CookieChangeEvent('change', { changed, deleted });
+      const event = new CookieChangeEvent('change', {
+        changed,
+        deleted
+      });
       this.onchange(event);
     }
   }
 
   async getAll(
-    init?: CookieStoreGetOptions['name'] | CookieStoreGetOptions,
-  ): Promise<Cookie[]> {
+    init ? : CookieStoreGetOptions['name'] | CookieStoreGetOptions,
+  ): Promise < Cookie[] > {
     const cookies = parse(document.cookie);
     if (Object.keys(init ?? {}).length === 0) {
       return cookies;
@@ -341,7 +347,7 @@ class CookieStore extends EventTarget {
 
   async delete(
     init: CookieStoreDeleteOptions['name'] | CookieStoreDeleteOptions,
-  ): Promise<void> {
+  ): Promise < void > {
     const item: CookieListItem = {
       name: '',
       value: '',
@@ -364,19 +370,20 @@ class CookieStore extends EventTarget {
 }
 
 interface CookieStoreGetOptions {
-  name?: string;
-  url?: string;
+  name ? : string;
+  url ? : string;
 }
 
-const workerSubscriptions = new WeakMap<
+const workerSubscriptions = new WeakMap <
   CookieStoreManager,
-  CookieStoreGetOptions[]
->();
+  CookieStoreGetOptions[] >
+  ();
 
-const registrations = new WeakMap<CookieStoreManager,ServiceWorkerRegistration>();
+const registrations = new WeakMap < CookieStoreManager,
+  ServiceWorkerRegistration > ();
 
 class CookieStoreManager {
-  get [Symbol.toStringTag]() {
+  get[Symbol.toStringTag]() {
     return 'CookieStoreManager';
   }
 
@@ -384,7 +391,7 @@ class CookieStoreManager {
     throw new TypeError('Illegal Constructor');
   }
 
-  async subscribe(subscriptions: CookieStoreGetOptions[]): Promise<void> {
+  async subscribe(subscriptions: CookieStoreGetOptions[]): Promise < void > {
     const currentSubcriptions = workerSubscriptions.get(this) || [];
     const worker = registrations.get(this);
     if (!worker) throw new TypeError('Illegal invocation');
@@ -392,7 +399,7 @@ class CookieStoreManager {
       const name = subscription.name;
       const url = new URL(subscription?.url || '', worker.scope).toString();
 
-      if (currentSubcriptions.some((x:any) => x.name === name && x.url === url))
+      if (currentSubcriptions.some((x: any) => x.name === name && x.url === url))
         continue;
       currentSubcriptions.push({
         name: subscription.name,
@@ -402,14 +409,17 @@ class CookieStoreManager {
     workerSubscriptions.set(this, currentSubcriptions);
   }
 
-  async getSubscriptions(): Promise<CookieStoreGetOptions[]> {
-    return (workerSubscriptions.get(this) || []).map(({ name, url }:CookieStoreGetOptions) => ({
+  async getSubscriptions(): Promise < CookieStoreGetOptions[] > {
+    return (workerSubscriptions.get(this) || []).map(({
+      name,
+      url
+    }: CookieStoreGetOptions) => ({
       name,
       url,
     }));
   }
 
-  async unsubscribe(subscriptions: CookieStoreGetOptions[]): Promise<void> {
+  async unsubscribe(subscriptions: CookieStoreGetOptions[]): Promise < void > {
     let currentSubcriptions = workerSubscriptions.get(this) || [];
 
     const worker = registrations.get(this);
@@ -420,7 +430,7 @@ class CookieStoreManager {
       // TODO: Parse the url with the relevant settings objects API base URL.
       // https://wicg.github.io/cookie-store/#CookieStoreManager-unsubscribe
       const url = new URL(subscription.url || '', worker.scope).toString();
-      currentSubcriptions = currentSubcriptions.filter((x:any) => {
+      currentSubcriptions = currentSubcriptions.filter((x: any) => {
         if (x.name !== name) return true;
         if (x.url !== url) return true;
         return false;
@@ -433,14 +443,15 @@ class CookieStoreManager {
 if (!isIn('cookies', G.ServiceWorkerRegistration?.prototype)) {
   Object.defineProperty(
     G.ServiceWorkerRegistration?.prototype ?? {},
-    'cookies',
-    {
+    'cookies', {
       configurable: true,
       enumerable: true,
       get() {
         const manager = Object.create(CookieStoreManager.prototype);
         registrations.set(manager, this);
-        Object.defineProperty(this, 'cookies', { value: manager });
+        Object.defineProperty(this, 'cookies', {
+          value: manager
+        });
         return manager;
       },
     },
@@ -461,4 +472,9 @@ declare global {
 
 const cookieStore = Object.create(CookieStore.prototype) as CookieStore;
 
-export { cookieStore, CookieStore, CookieChangeEvent, document };
+export {
+  cookieStore,
+  CookieStore,
+  CookieChangeEvent,
+  document
+};
